@@ -1,9 +1,7 @@
-# OpenAI Plugin for Obsidian
+# Search Plugin for Obsidian
 
-This is a plugin for Obsidian to use OpenAI features.
+Search anything in your Obsidian Vault, fast.
 
-# Why another one?
+# Overview
 
-I think the current plugins don't fit my needs. I want to be able to use more linking features in Obsidian when I use OpenAI. This way very powerful workflows can be set up (think manual RAG by supplying links).
-
-Also I really enjoy taking voice memos. Being able to transcribe voice memos and YouTube links is going to help me a lot in my daily routines.
+Obsidian is very powerful in terms of file management, and I want to take it up a notch by adding AI-powered search into the vault.

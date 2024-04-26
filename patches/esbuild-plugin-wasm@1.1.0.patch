@@ -1,0 +1,14 @@
+diff --git a/dist/index.js b/dist/index.js
+index 83316da80645e3317334d6a500a5d6db1a3e5578..3789b8c93f1f5262640fb2f2f0c57440793509ea 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -51,7 +51,6 @@
+             return await WebAssembly.instantiate(module, imports);
+         }
+ 
+-        export const { instance, module } = await loadWasm(wasmModule, imports);
+-
+-        ${L("instance.exports",r)}
++        export { wasmModule };
++        export const loadWasmPromise = loadWasm(wasmModule, imports);
+     `}var m="wasm-module",y="wasm-deferred",M="wasm-embedded";function p(e){var s;let t=((s=e==null?void 0:e.mode)==null?void 0:s.toLowerCase())=="embedded";return{name:"wasm",setup(r){r.onResolve({filter:/\.(?:wasm)$/},o=>{if(o.namespace===m)return{path:o.path,namespace:t?M:y};if(o.resolveDir!=="")return{path:n.default.isAbsolute(o.path)?o.path:n.default.join(o.resolveDir,o.path),namespace:m}}),r.onLoad({filter:/.*/,namespace:m},async o=>({contents:await W(o.path,r.initialOptions.platform),resolveDir:n.default.dirname(o.path)})),r.onLoad({filter:/.*/,namespace:y},async o=>({contents:await l.default.promises.readFile(o.path),loader:"file"})),r.onLoad({filter:/.*/,namespace:M},async o=>({contents:await l.default.promises.readFile(o.path),loader:"binary"}))}}}p.wasmLoader=p;0&&(module.exports={wasmLoader});

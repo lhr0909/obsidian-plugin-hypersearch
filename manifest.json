@@ -1,9 +1,9 @@
 {
-    "id": "obsidian-search",
-    "name": "Obsidian Search Plugin",
+    "id": "hypersearch",
+    "name": "Hypersearch plugin for Obsidian",
     "version": "0.0.1",
     "minAppVersion": "1.5.0",
-    "description": "Search anything in Obsidian",
+    "description": "Search anything in Obsidian, fast",
     "author": "Simon Liang",
     "authorUrl": "https://github.com/lhr0909",
     "fundingUrl": "https://github.com/lhr0909",

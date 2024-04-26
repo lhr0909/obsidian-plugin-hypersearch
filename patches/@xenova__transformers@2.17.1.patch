@@ -1,8 +1,8 @@
 diff --git a/src/backends/onnx.js b/src/backends/onnx.js
-index 0bee3dce7184d1fec1bd0e75677a6fea3a47db30..c901b134cf24dfa7bb6d700986e92d53069e4c78 100644
+index 0bee3dce7184d1fec1bd0e75677a6fea3a47db30..9c3d4cbe725fd4157ab52cbf80fb17bb59eafd5f 100644
 --- a/src/backends/onnx.js
 +++ b/src/backends/onnx.js
-@@ -6,45 +6,57 @@
+@@ -6,45 +6,55 @@
   * So, we just import both packages, and use the appropriate one based on the environment:
   *   - When running in node, we use `onnxruntime-node`.
   *   - When running in the browser, we use `onnxruntime-web` (`onnxruntime-node` is not bundled).
@@ -33,8 +33,6 @@ index 0bee3dce7184d1fec1bd0e75677a6fea3a47db30..c901b134cf24dfa7bb6d700986e92d53
 +ONNX_WEB.env.wasm.wasmPaths = {
 +    'ort-wasm.wasm': `data:application/octet-stream;base64,${wasmModule}`,
 +};
-+
-+console.log(ONNX_WEB.env);
  
  /** @type {import('onnxruntime-web')} The ONNX runtime module. */
 -export let ONNX;

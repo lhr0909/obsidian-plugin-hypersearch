@@ -6,7 +6,7 @@ settings:
 
 patchedDependencies:
   '@xenova/transformers@2.17.1':
-    hash: ps656ezrul4veb24d2tyjzpdne
+    hash: lxh5c7mjodj6rflspe2rimm4om
     path: patches/@xenova__transformers@2.17.1.patch
   voy-search@0.6.3:
     hash: chi3sfqqwpy62vnep7jonyryba
@@ -18,7 +18,7 @@ dependencies:
     version: 0.0.52(@xenova/transformers@2.17.1)(voy-search@0.6.3)
   '@xenova/transformers':
     specifier: ^2.17.1
-    version: 2.17.1(patch_hash=ps656ezrul4veb24d2tyjzpdne)
+    version: 2.17.1(patch_hash=lxh5c7mjodj6rflspe2rimm4om)
   langchain:
     specifier: ^0.1.36
     version: 0.1.36(@xenova/transformers@2.17.1)(voy-search@0.6.3)
@@ -882,7 +882,7 @@ packages:
     dependencies:
       '@langchain/core': 0.1.60
       '@langchain/openai': 0.0.28
-      '@xenova/transformers': 2.17.1(patch_hash=ps656ezrul4veb24d2tyjzpdne)
+      '@xenova/transformers': 2.17.1(patch_hash=lxh5c7mjodj6rflspe2rimm4om)
       expr-eval: 2.0.2
       flat: 5.0.2
       langsmith: 0.1.18
@@ -1022,7 +1022,7 @@ packages:
     resolution: {integrity: sha512-jg+97EGIcY9AGHJJRaaPVgetKDsrTgbRjQ5Msgjh/DQKEFl0DtyRr/VCOyD1T2R1MNeWPK/u7JoGhlDZnKBAfA==}
     dev: false
 
-  /@xenova/transformers@2.17.1(patch_hash=ps656ezrul4veb24d2tyjzpdne):
+  /@xenova/transformers@2.17.1(patch_hash=lxh5c7mjodj6rflspe2rimm4om):
     resolution: {integrity: sha512-zo702tQAFZXhzeD2GCYUNUqeqkoueOdiSbQWa4s0q7ZE4z8WBIwIsMMPGobpgdqjQ2u0Qulo08wuqVEUrBXjkQ==}
     dependencies:
       '@huggingface/jinja': 0.2.2

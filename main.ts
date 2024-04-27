@@ -7,6 +7,7 @@ import {
   Plugin,
   PluginSettingTab,
   Setting,
+  TFile,
 } from "obsidian";
 import { newVoy, Voy } from "voy-search";
 
@@ -17,7 +18,7 @@ import { RecursiveCharacterTextSplitter, TextSplitter } from "langchain/text_spl
 
 // TODO: see how to set these things up
 env.allowRemoteModels = false;
-env.localModelPath = '/Users/simon/Documents/git-repo/cool/obsidian-vault/.obsidian/plugins/obsidian-search/models';
+env.localModelPath = '/Users/simon/Documents/git-repo/cool/obsidian-vault/.obsidian/plugins/hypersearch/models';
 
 interface MyPluginSettings {
   mySetting: string;
@@ -43,7 +44,7 @@ export default class MyPlugin extends Plugin {
       chunkOverlap: 0,
     });
 
-    const index = await newVoy();
+    this.index = await newVoy();
 
     // This creates an icon in the left ribbon.
     // const ribbonIconEl = this.addRibbonIcon(
@@ -70,10 +71,42 @@ export default class MyPlugin extends Plugin {
         const files = this.app.vault.getFiles();
         console.log(files);
         for (const file of files) {
-          const content = await this.app.vault.cachedRead(file);
+          if (!file.extension || file.extension !== "md") {
+            continue;
+          }
+
+          const content = await this.app.vault.read(file);
           const documents = await this.splitter.createDocuments([content]);
-          console.log(documents);
+          for (const document of documents) {
+              console.log(document);
+              const id = `${file.path}:${document.metadata.loc?.lines?.from}-${document.metadata.loc?.lines?.to}`
+              const title = file.basename;
+              const url = id;
+
+              const embeddings = await this.extractor(document.pageContent, {
+                pooling: "cls",
+                normalize: true,
+              });
+
+              this.index.add({
+                embeddings: [{
+                  id,
+                  title,
+                  url,
+                  embeddings: embeddings.tolist()[0],
+                }],
+              });
+          }
         }
+
+        const indexFile = this.app.vault.getAbstractFileByPath("hypersearch/index.json");
+
+        if (indexFile instanceof TFile) {
+          await this.app.vault.delete(indexFile);
+        }
+
+        await this.app.vault.create("hypersearch/index.json", this.index.serialize());
+        console.log("done indexing");
       },
     });
     // This adds an editor command that can perform some operation on the current editor instance
@@ -122,6 +155,24 @@ export default class MyPlugin extends Plugin {
     // this.registerInterval(
     //   window.setInterval(() => console.log("setInterval"), 5 * 60 * 1000),
     // );
+
+  }
+
+  private async getWorkerResult() {
+    let resolver: (value?: unknown) => void;
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    let message: any = undefined;
+    // biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
+    const messagePromise = new Promise((resolve) => resolver = resolve);
+
+    this.embeddingWorker.onmessage = async ({ data }) => {
+      message = data;
+      this.embeddingWorker.onmessage = null;
+      resolver?.();
+    }
+
+    await messagePromise;
+    return message;
   }
 
   onunload() {}

@@ -17,6 +17,7 @@
         "@types/node": "^20",
         "builtin-modules": "^3.3.0",
         "esbuild": "^0.20.0",
+        "esbuild-plugin-inline-worker": "^0.1.1",
         "esbuild-plugin-wat": "^0.2.7",
         "obsidian": "latest",
         "tslib": "^2.6.2",

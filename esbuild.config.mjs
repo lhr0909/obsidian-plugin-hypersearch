@@ -34,7 +34,7 @@ const context = await esbuild.context({
     "@lezer/lr",
     ...builtins,
   ],
-  platform: "browser",
+  // platform: "browser",
   format: "cjs",
   target: "es2022",
   logLevel: "info",
@@ -42,12 +42,9 @@ const context = await esbuild.context({
   treeShaking: true,
   outfile: "main.js",
   plugins: [
-    // wasmLoader({
-    //   mode: 'embedded',
-    // }),
     watPlugin({
       loader: 'base64',
-    })
+    }),
   ],
 });
 

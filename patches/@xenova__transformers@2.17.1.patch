@@ -1,8 +1,8 @@
 diff --git a/src/backends/onnx.js b/src/backends/onnx.js
-index 0bee3dce7184d1fec1bd0e75677a6fea3a47db30..9c3d4cbe725fd4157ab52cbf80fb17bb59eafd5f 100644
+index 0bee3dce7184d1fec1bd0e75677a6fea3a47db30..29017fb8717e1a1363503002abd504e01e2e265d 100644
 --- a/src/backends/onnx.js
 +++ b/src/backends/onnx.js
-@@ -6,45 +6,55 @@
+@@ -6,45 +6,54 @@
   * So, we just import both packages, and use the appropriate one based on the environment:
   *   - When running in node, we use `onnxruntime-node`.
   *   - When running in the browser, we use `onnxruntime-web` (`onnxruntime-node` is not bundled).
@@ -25,7 +25,6 @@ index 0bee3dce7184d1fec1bd0e75677a6fea3a47db30..9c3d4cbe725fd4157ab52cbf80fb17bb
  import * as ONNX_WEB from 'onnxruntime-web';
 +import wasmModule from '../../dist/ort-wasm.wasm';
 +
-+// these configurations disables worker use
 +ONNX_WEB.env.logLevel = 'verbose';
 +ONNX_WEB.env.wasm.numThreads = 1;
 +ONNX_WEB.env.wasm.proxy = false;

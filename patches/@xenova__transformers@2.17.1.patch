@@ -1,8 +1,8 @@
 diff --git a/src/backends/onnx.js b/src/backends/onnx.js
-index 0bee3dce7184d1fec1bd0e75677a6fea3a47db30..29017fb8717e1a1363503002abd504e01e2e265d 100644
+index 0bee3dce7184d1fec1bd0e75677a6fea3a47db30..73af102dfc697da3a30f774df029b438e3c25c84 100644
 --- a/src/backends/onnx.js
 +++ b/src/backends/onnx.js
-@@ -6,45 +6,54 @@
+@@ -6,45 +6,60 @@
   * So, we just import both packages, and use the appropriate one based on the environment:
   *   - When running in node, we use `onnxruntime-node`.
   *   - When running in the browser, we use `onnxruntime-web` (`onnxruntime-node` is not bundled).
@@ -21,16 +21,23 @@ index 0bee3dce7184d1fec1bd0e75677a6fea3a47db30..29017fb8717e1a1363503002abd504e0
  // NOTE: Import order matters here. We need to import `onnxruntime-node` before `onnxruntime-web`.
  // In either case, we select the default export if it exists, otherwise we use the named export.
 -import * as ONNX_NODE from 'onnxruntime-node';
+-import * as ONNX_WEB from 'onnxruntime-web';
 +// import * as ONNX_NODE from 'onnxruntime-node';
- import * as ONNX_WEB from 'onnxruntime-web';
-+import wasmModule from '../../dist/ort-wasm.wasm';
++import * as ONNX_WEB from "onnxruntime-web";
++// import wasmModule from "../../dist/ort-wasm.wasm";
++import wasmThreadedModule from "../../dist/ort-wasm-threaded.wasm";
++// import wasmSimdModule from "../../dist/ort-wasm-simd.wasm";
++// import wasmSimdThreadedModule from "../../dist/ort-wasm-simd-threaded.wasm";
 +
-+ONNX_WEB.env.logLevel = 'verbose';
-+ONNX_WEB.env.wasm.numThreads = 1;
-+ONNX_WEB.env.wasm.proxy = false;
++ONNX_WEB.env.logLevel = "verbose";
++ONNX_WEB.env.wasm.numThreads = 3;
++ONNX_WEB.env.wasm.proxy = true;
 +ONNX_WEB.env.wasm.simd = false;
 +ONNX_WEB.env.wasm.wasmPaths = {
-+    'ort-wasm.wasm': `data:application/octet-stream;base64,${wasmModule}`,
++  // "ort-wasm.wasm": `data:application/octet-stream;base64,${wasmModule}`,
++  "ort-wasm-threaded.wasm": `data:application/octet-stream;base64,${wasmThreadedModule}`,
++  // "ort-wasm-simd.wasm": `data:application/octet-stream;base64,${wasmSimdModule}`,
++  // "ort-wasm-simd-threaded.wasm": `data:application/octet-stream;base64,${wasmSimdThreadedModule}`,
 +};
  
  /** @type {import('onnxruntime-web')} The ONNX runtime module. */
@@ -38,8 +45,10 @@ index 0bee3dce7184d1fec1bd0e75677a6fea3a47db30..29017fb8717e1a1363503002abd504e0
 +export let ONNX = ONNX_WEB;
  
  export const executionProviders = [
-     // 'webgpu',
-     'wasm'
+-    // 'webgpu',
+-    'wasm'
++  // 'webgpu',
++  "wasm",
  ];
  
 -if (typeof process !== 'undefined' && process?.release?.name === 'node') {

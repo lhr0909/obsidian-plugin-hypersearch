@@ -9,27 +9,43 @@ import {
   Setting,
   TFile,
 } from "obsidian";
-import { newVoy, Voy } from "voy-search";
+import { Voy } from "voy-search";
 
 import { FeatureExtractionPipeline, pipeline, env } from "@xenova/transformers";
-import { RecursiveCharacterTextSplitter, TextSplitter } from "langchain/text_splitter";
+import {
+  RecursiveCharacterTextSplitter,
+  TextSplitter,
+} from "langchain/text_splitter";
+
+import { ortWasm } from "./wasms/ort-wasm";
+import { ortWasmThreaded } from "./wasms/ort-wasm-threaded";
+import { ortWasmSimd } from "./wasms/ort-wasm-simd";
+import { ortWasmSimdThreaded } from "./wasms/ort-wasm-simd-threaded";
 
 // Remember to rename these classes and interfaces!
 
 // TODO: see how to set these things up
 env.allowRemoteModels = false;
-env.localModelPath = '/Users/simon/Documents/git-repo/cool/obsidian-vault/.obsidian/plugins/hypersearch/models';
+env.localModelPath =
+  "/Users/simon/Documents/git-repo/cool/obsidian-vault/.obsidian/plugins/hypersearch/models";
 
-interface MyPluginSettings {
+env.backends.onnx.wasm.wasmPaths = {
+  "ort-wasm.wasm": `data:application/octet-stream;base64,${ortWasm}`,
+  "ort-wasm-threaded.wasm": `data:application/octet-stream;base64,${ortWasmThreaded}`,
+  "ort-wasm-simd.wasm": `data:application/octet-stream;base64,${ortWasmSimd}`,
+  "ort-wasm-simd-threaded.wasm": `data:application/octet-stream;base64,${ortWasmSimdThreaded}`,
+};
+
+interface HypersearchPluginSettings {
   mySetting: string;
 }
 
-const DEFAULT_SETTINGS: MyPluginSettings = {
+const DEFAULT_SETTINGS: HypersearchPluginSettings = {
   mySetting: "default",
 };
 
-export default class MyPlugin extends Plugin {
-  settings: MyPluginSettings;
+export default class HypersearchPlugin extends Plugin {
+  settings: HypersearchPluginSettings;
   extractor: FeatureExtractionPipeline;
   splitter: TextSplitter;
   index: Voy;
@@ -44,7 +60,7 @@ export default class MyPlugin extends Plugin {
       chunkOverlap: 0,
     });
 
-    this.index = await newVoy();
+    this.index = await new Voy();
 
     // This creates an icon in the left ribbon.
     // const ribbonIconEl = this.addRibbonIcon(
@@ -78,34 +94,41 @@ export default class MyPlugin extends Plugin {
           const content = await this.app.vault.read(file);
           const documents = await this.splitter.createDocuments([content]);
           for (const document of documents) {
-              console.log(document);
-              const id = `${file.path}:${document.metadata.loc?.lines?.from}-${document.metadata.loc?.lines?.to}`
-              const title = file.basename;
-              const url = id;
+            console.log(document);
+            const id = `${file.path}:${document.metadata.loc?.lines?.from}-${document.metadata.loc?.lines?.to}`;
+            const title = file.basename;
+            const url = id;
 
-              const embeddings = await this.extractor(document.pageContent, {
-                pooling: "cls",
-                normalize: true,
-              });
+            const embeddings = await this.extractor(document.pageContent, {
+              pooling: "cls",
+              normalize: true,
+            });
 
-              this.index.add({
-                embeddings: [{
+            this.index.add({
+              embeddings: [
+                {
                   id,
                   title,
                   url,
                   embeddings: embeddings.tolist()[0],
-                }],
-              });
+                },
+              ],
+            });
           }
         }
 
-        const indexFile = this.app.vault.getAbstractFileByPath("hypersearch/index.json");
+        const indexFile = this.app.vault.getAbstractFileByPath(
+          "hypersearch/index.json",
+        );
 
         if (indexFile instanceof TFile) {
           await this.app.vault.delete(indexFile);
         }
 
-        await this.app.vault.create("hypersearch/index.json", this.index.serialize());
+        await this.app.vault.create(
+          "hypersearch/index.json",
+          this.index.serialize(),
+        );
         console.log("done indexing");
       },
     });
@@ -155,24 +178,6 @@ export default class MyPlugin extends Plugin {
     // this.registerInterval(
     //   window.setInterval(() => console.log("setInterval"), 5 * 60 * 1000),
     // );
-
-  }
-
-  private async getWorkerResult() {
-    let resolver: (value?: unknown) => void;
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    let message: any = undefined;
-    // biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
-    const messagePromise = new Promise((resolve) => resolver = resolve);
-
-    this.embeddingWorker.onmessage = async ({ data }) => {
-      message = data;
-      this.embeddingWorker.onmessage = null;
-      resolver?.();
-    }
-
-    await messagePromise;
-    return message;
   }
 
   onunload() {}
@@ -204,9 +209,9 @@ class SampleModal extends Modal {
 }
 
 class SampleSettingTab extends PluginSettingTab {
-  plugin: MyPlugin;
+  plugin: HypersearchPlugin;
 
-  constructor(app: App, plugin: MyPlugin) {
+  constructor(app: App, plugin: HypersearchPlugin) {
     super(app, plugin);
     this.plugin = plugin;
   }

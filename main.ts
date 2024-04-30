@@ -29,6 +29,7 @@ env.allowRemoteModels = false;
 env.localModelPath =
   "/Users/simon/Documents/git-repo/cool/obsidian-vault/.obsidian/plugins/hypersearch/models";
 
+env.backends.onnx.wasm.numThreads = 1;
 env.backends.onnx.wasm.wasmPaths = {
   "ort-wasm.wasm": `data:application/octet-stream;base64,${ortWasm}`,
   "ort-wasm-threaded.wasm": `data:application/octet-stream;base64,${ortWasmThreaded}`,
@@ -60,7 +61,7 @@ export default class HypersearchPlugin extends Plugin {
       chunkOverlap: 0,
     });
 
-    this.index = await new Voy();
+    this.index = new Voy();
 
     // This creates an icon in the left ribbon.
     // const ribbonIconEl = this.addRibbonIcon(

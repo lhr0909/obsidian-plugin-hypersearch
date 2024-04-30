@@ -1,0 +1,59 @@
+diff --git a/voy_search.d.ts b/voy_search.d.ts
+index b784e39849547b9cac21f955ee296e5bd28d0df2..534f0d468ba35440f2dbb519fd1425771bc2bb1c 100644
+--- a/voy_search.d.ts
++++ b/voy_search.d.ts
+@@ -98,3 +98,5 @@ export class Voy {
+ */
+   size(): number;
+ }
++
++export async function newVoy(resource?: Resource): Promise<Voy>;
+diff --git a/voy_search.js b/voy_search.js
+index 945d97452452b55a8f848b06b88af5107cb7d194..0acdf39404d9fbf61e3ffccae8492c8eecfc8635 100644
+--- a/voy_search.js
++++ b/voy_search.js
+@@ -1,4 +1,41 @@
+-import * as wasm from "./voy_search_bg.wasm";
+-import { __wbg_set_wasm } from "./voy_search_bg.js";
+-__wbg_set_wasm(wasm);
++import wasm from "./voy_search_bg.wasm";
++
++// manually importing bindgen for now
++import {
++  __wbg_set_wasm,
++  __wbindgen_object_clone_ref,
++  __wbindgen_is_undefined,
++  __wbindgen_object_drop_ref,
++  __wbg_new_abda76e883ba8a5f,
++  __wbg_stack_658279fe44541cf6,
++  __wbg_error_f851667af71bcfc6,
++  __wbg_parse_76a8a18ca3f8730b,
++  __wbg_stringify_d06ad2addc54d51e,
++  __wbindgen_string_get,
++  __wbindgen_throw,
++} from "./voy_search_bg.js";
++
++// based on wasm-loader of webpack
++const loadWasmPromise = wasm({
++  "./voy_search_bg.js": {
++    __wbindgen_object_clone_ref,
++    __wbindgen_is_undefined,
++    __wbindgen_object_drop_ref,
++    __wbg_new_abda76e883ba8a5f,
++    __wbg_error_f851667af71bcfc6,
++    __wbg_stack_658279fe44541cf6,
++    __wbg_parse_76a8a18ca3f8730b,
++    __wbg_stringify_d06ad2addc54d51e,
++    __wbindgen_string_get,
++    __wbindgen_throw,
++  },
++}).then(({ instance }) => {
++  __wbg_set_wasm(instance.exports);
++});
++
++export async function newVoy(resource) {
++  await loadWasmPromise;
++  return new Voy(resource);
++}
++
+ export * from "./voy_search_bg.js";

@@ -1,5 +1,6 @@
 const path = require("node:path");
 const builtins = require("builtin-modules");
+const webpack = require("webpack");
 
 module.exports = {
   mode: "development",
@@ -41,4 +42,9 @@ module.exports = {
       'onnxruntime-node': false,
     },
   },
+  plugins: [
+    new webpack.optimize.LimitChunkCountPlugin({
+      maxChunks: 1,
+    }),
+  ],
 };
